@@ -81,7 +81,7 @@ Status values accepted by the core: `DRAFT`, `PENDING_APPROVAL`, `ACTIVE`, `SUSP
 
 - Java 25
 - Apache Maven 3.9+
-- `core-lending-supply-chain-finance-sdk` 26.10.4
+- `core-lending-supply-chain-finance-sdk` 26.10.5
 - Apache Kafka on `localhost:9092` when event publishing is left at the default
 
 ### Environment
