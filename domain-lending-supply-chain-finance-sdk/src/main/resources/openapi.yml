@@ -281,7 +281,7 @@ components:
           type: string
           enum:
           - FACTORING
-          - CONFIRMING
+          - REVERSE_FACTORING
         agreementNumber:
           type: string
         loanServicingCaseId:

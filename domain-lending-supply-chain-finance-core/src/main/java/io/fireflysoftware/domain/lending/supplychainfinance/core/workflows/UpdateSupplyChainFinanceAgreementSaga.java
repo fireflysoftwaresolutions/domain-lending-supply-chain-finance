@@ -74,6 +74,9 @@ public class UpdateSupplyChainFinanceAgreementSaga {
         if (incoming == null) {
             return Mono.error(new IllegalArgumentException("Supply chain finance agreement is required"));
         }
+        if (incoming.getFinanceType() == null && current.getFinanceType() != null) {
+            incoming.setFinanceType(current.getFinanceType());
+        }
         if (current.getStatus() != null) {
             incoming.setStatus(current.getStatus());
         }

@@ -15,7 +15,7 @@
     <name>domain-lending-supply-chain-finance</name>
     <version>26.10.3</version>
     <packaging>pom</packaging>
-    <description>Orchestrates supply chain finance agreement create, update, status, and close commands through the supply chain finance core. Developed by the Firefly Software Foundation.</description>
+    <description>Trade finance agreement saga. Passes FACTORING and REVERSE_FACTORING through to the supply chain finance core. Developed by the Firefly Software Foundation.</description>
     <url>https://openplatform.fireflysoftware.io/domain-lending-supply-chain-finance</url>
 
     <modules>

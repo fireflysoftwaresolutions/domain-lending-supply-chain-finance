@@ -13,7 +13,16 @@ Developed by the Firefly Software Foundation. [dev@fireflysoftware.io](mailto:de
 
 [Website](https://fireflysoftware.io/) · [OpenPlatform](https://fireflysoftware.io/openplatform/) · [Module catalogue](https://fireflysoftware.io/openplatform/modules/)
 
-Domain layer microservice for supply chain finance agreements within the Firefly platform. This service orchestrates create, update, status change, close, and query against `core-lending-supply-chain-finance` with compensating saga steps.
+Domain layer for the trade finance family. This service owns the agreement saga in front of `core-lending-supply-chain-finance` and passes the product kind through on create and update.
+
+Stored product kinds, accepted and forwarded as `financeType`:
+
+| Kind | Meaning |
+|------|---------|
+| `FACTORING` | Purchase of receivables |
+| `REVERSE_FACTORING` | Payables finance. Confirming is the Spanish market name for this kind. |
+
+The saga orchestrates create, update, status change, close, and query.
 
 Repository: [https://github.com/fireflysoftwaresolutions/domain-lending-supply-chain-finance](https://github.com/fireflysoftwaresolutions/domain-lending-supply-chain-finance)
 

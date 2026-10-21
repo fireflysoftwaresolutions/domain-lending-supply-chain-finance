@@ -83,6 +83,26 @@ class UpdateSupplyChainFinanceAgreementSagaTest {
     }
 
     @Test
+    void update_passesReverseFactoringThrough() {
+        UUID id = UUID.randomUUID();
+        SupplyChainFinanceAgreementDTO current = new SupplyChainFinanceAgreementDTO(id);
+        current.setStatus(SupplyChainFinanceAgreementDTO.StatusEnum.DRAFT);
+        current.setFinanceType(SupplyChainFinanceAgreementDTO.FinanceTypeEnum.FACTORING);
+        SupplyChainFinanceAgreementDTO incoming = new SupplyChainFinanceAgreementDTO();
+        incoming.setFinanceType(SupplyChainFinanceAgreementDTO.FinanceTypeEnum.REVERSE_FACTORING);
+        when(commandBus.send(any(ApplySupplyChainFinanceAgreementStatusCommand.class))).thenAnswer(invocation ->
+                Mono.just(invocation.getArgument(0, ApplySupplyChainFinanceAgreementStatusCommand.class).record()));
+
+        ExecutionContext ctx = ExecutionContext.forSaga(SupplyChainFinanceAgreementSagaConstants.SAGA_UPDATE_RECORD, "test");
+        ctx.putVariable(SupplyChainFinanceAgreementSagaConstants.CTX_RECORD, current);
+
+        StepVerifier.create(saga.updateSupplyChainFinanceAgreement(new UpdateSupplyChainFinanceAgreementCommand(id, incoming), ctx))
+                .assertNext(saved -> assertThat(saved.getFinanceType())
+                        .isEqualTo(SupplyChainFinanceAgreementDTO.FinanceTypeEnum.REVERSE_FACTORING))
+                .verifyComplete();
+    }
+
+    @Test
     void restore_writesThePreviousRecordBack() {
         UUID id = UUID.randomUUID();
         SupplyChainFinanceAgreementDTO previous = new SupplyChainFinanceAgreementDTO(id);
