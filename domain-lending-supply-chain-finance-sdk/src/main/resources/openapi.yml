@@ -1,0 +1,355 @@
+openapi: 3.0.1
+info:
+  title: Domain Lending Supply Chain Finance API
+  description: "Orchestrates supply chain finance agreements through core-lending-supply-chain-finance.\
+    \ It creates, updates, changes status, and closes agreements through the supply\
+    \ chain finance core. Party, contract, and product identifiers stay UUIDs."
+  contact:
+    name: Firefly Software Foundation
+    email: dev@fireflysoftware.io
+  version: 1.0.0
+servers:
+- url: https://openplatform.fireflysoftware.io/domain-lending-supply-chain-finance
+  description: Development Environment
+- url: /
+  description: Local Development Environment
+tags:
+- name: SupplyChainFinanceAgreements
+  description: Domain orchestration for supply chain finance agreements
+paths:
+  /api/v1/supply-chain-finance-agreements/{agreementId}/status:
+    put:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Update status
+      description: Runs the status saga against core-lending-supply-chain-finance.
+      operationId: updateStatus
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusChangeRequest"
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "404":
+          description: Not found
+  /api/v1/supply-chain-finance-agreements/{agreementId}:
+    get:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Get supply chain finance agreement
+      description: Reads one record from core-lending-supply-chain-finance.
+      operationId: get
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "404":
+          description: Not found
+    put:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Update supply chain finance agreement
+      description: Runs the update saga against core-lending-supply-chain-finance.
+        Status is left unchanged.
+      operationId: update
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "404":
+          description: Not found
+    delete:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Remove supply chain finance agreement
+      description: Deletes the record through core-lending-supply-chain-finance when
+        that core allows removal.
+      operationId: remove
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Removed
+        "404":
+          description: Not found
+  /api/v1/supply-chain-finance-agreements/{agreementId}/close:
+    post:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Close supply chain finance agreement
+      description: Closes an agreement when the supply chain finance core allows CLOSED.
+      operationId: close
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReasonRequest"
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "404":
+          description: Not found
+  /api/v1/supply-chain-finance-agreements/{agreementId}/cancel:
+    post:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Cancel supply chain finance agreement
+      description: Cancels an agreement by writing TERMINATED when the supply chain
+        finance core allows that move.
+      operationId: cancel
+      parameters:
+      - name: agreementId
+        in: path
+        description: Core identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReasonRequest"
+        required: true
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "404":
+          description: Not found
+  /api/v1/supply-chain-finance-agreements:
+    post:
+      tags:
+      - SupplyChainFinanceAgreements
+      summary: Create supply chain finance agreement
+      description: Runs the register saga against core-lending-supply-chain-finance.
+      operationId: create
+      parameters:
+      - name: X-Idempotency-Key
+        in: header
+        description: "Unique key for idempotent requests. If provided, ensures that\
+          \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainFinanceAgreementDTO"
+        "400":
+          description: Invalid request
+components:
+  schemas:
+    StatusChangeRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        statusReason:
+          type: string
+    SupplyChainFinanceAgreementDTO:
+      required:
+      - agreementNumber
+      - currency
+      - financeType
+      - loanServicingCaseId
+      - startDate
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          nullable: true
+        financeType:
+          type: string
+          enum:
+          - FACTORING
+          - CONFIRMING
+        agreementNumber:
+          type: string
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - PENDING_APPROVAL
+          - ACTIVE
+          - SUSPENDED
+          - TERMINATED
+          - CLOSED
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        currency:
+          type: string
+        creditLimit:
+          type: number
+          nullable: true
+        availableLimit:
+          type: number
+          nullable: true
+        outstandingAmount:
+          type: number
+          nullable: true
+        recourse:
+          type: boolean
+          nullable: true
+        notificationRequired:
+          type: boolean
+          nullable: true
+        advanceRate:
+          type: number
+          nullable: true
+        supplierEarlyPaymentOption:
+          type: boolean
+          nullable: true
+        standardPaymentTermDays:
+          type: integer
+          format: int32
+          nullable: true
+        earlyPaymentDiscountDays:
+          type: integer
+          format: int32
+          nullable: true
+        interestRate:
+          type: number
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+          format: uuid
+          nullable: true
+        lastModifiedBy:
+          type: string
+          format: uuid
+          nullable: true
+    ReasonRequest:
+      type: object
+      properties:
+        statusReason:
+          type: string
